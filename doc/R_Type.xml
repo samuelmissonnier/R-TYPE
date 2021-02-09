@@ -1,0 +1,272 @@
+<rfc
+    category="info"
+    ipr="trust200902"
+    docName="R-Type - server to client"
+    consensus="no"
+    submissionType="IETF"
+    xml:lang="en"
+>
+    <front>
+        <title>TITRE</title>
+        <author fullname="Kilian HERBRETEAU" initials="K." surname="HERBRETEAU">
+            <organization abbrev="EPITECH">EPITECH</organization>
+            <address>
+                <email>kilian.herbreteau@epitech.eu</email>
+            </address>
+        </author>
+        <author fullname="Samuel RAUTUREAU" initials="S." surname="RAUTUREAU">
+            <organization abbrev="EPITECH">EPITECH</organization>
+            <address>
+                <email>samuel.rautureau@epitech.eu</email>
+            </address>
+        </author>
+        <author fullname="Nathan FROMAGE" initials="N." surname="FROMAGE">
+            <organization abbrev="EPITECH">EPITECH</organization>
+            <address>
+                <email>nathan.fromage@epitech.eu</email>
+            </address>
+        </author>
+        <author fullname="Samuel MISSONNIER" initials="S." surname="MISSONNIER">
+            <organization abbrev="EPITECH">EPITECH</organization>
+            <address>
+                <email>samuel.missonnier@epitech.eu</email>
+            </address>
+        </author>
+        <date year="2020" month="november"/>
+        <area>General</area>
+        <workgroup>EPITECH</workgroup>
+        <keyword>R-Type</keyword>
+    </front>
+    <middle>
+        <section title="INTRODUCTION">
+            <t>The different objectives of the R-Type project are:</t>
+            <t>1) to communicate between a server and all clients.</t>
+            <t>2) to create a multi-player game.</t>
+            <t>3) to make a game graphical interface for users.</t>
+            <t>In this section, we are going to explain how to use the protocol, the differents
+ commands avaible and how to create your own server and client R-Type.</t>
+        </section>
+        <section title="INFORMATION">
+            <t>The server will send informations of users on the client socket.</t>
+            <t>Client socket is handle by the server.</t>
+            <t>Every clients will write on his socket.</t>
+            <t>Commands and replies can take parameters.</t>
+            <section title="Parameter Information">
+                <t>- CLIENT_NAME : this is the name of a client, every client need to have an unique name.</t>
+                <t>- GAME_NAME : this is the name of a game, every game need to have an unique name.</t>
+                <t>- ERROR : this is an error description. (exemple: "login already used") </t>
+                <t>- MAP : this is a map of all entity, every entity will be send like that {entityType, other information}</t>
+                <t> entityType : they are 4 entityType: "Player", "Text", "Projectile", "Enemy"</t>
+                <texttable title="Data transfert">
+                    <ttcol align='center'>Name</ttcol>
+                    <ttcol align='center'>Byte Size</ttcol>
+                    <c>CLIENT_NAME</c>
+                    <c>16 bytes</c>
+                    <c>GAME_NAME</c>
+                    <c>16 bytes</c>
+                    <c>ERROR</c>
+                    <c>128 bytes</c>
+                    <c>MAP</c>
+                    <c>---</c>
+                </texttable>
+                <t>Inside the MAP we can have 4 entities type (Text, Player, Enemy, Projectile).</t>
+                <t>All of then need to send some arguments</t>
+                <section title="Entity Type">
+                    <section title="Text">
+                        <t>{"Test";"ID";"PATH";"TEXT";"POS";"SIZE";"COLOR";}</t>
+                    </section>
+                    <section title="Player">
+                        <t>{"Player";"ID";"POS";"LI";}</t>
+                    </section>
+                    <section title="Enemy">
+                        <t>{"Enemy";"ID";"PATH";"RECT";"POS";"SCALE";"TBA";"LI";"AI";"LIFE";"NBA";"MOVE_TYPE"}</t>
+                    </section>
+                    <section title="Projectile">
+                        <t>{"Projectile";"ID";"PATH";"RECT";"POS";"SCALE";"TBA";"LI";"AI";"DIRECT";"SPEED";}</t>
+                    </section>
+                </section>
+                <section title="Data information">
+                    <t>- ID: this is the id of the entity</t>
+                    <t>- PATH: the path to the image</t>
+                    <t>- RECT: a rect of image</t>
+                    <t>- POS: the position in the map</t>
+                    <t>- SCALE: the of image</t>
+                    <t>- TBA: Time Between Anim in sec</t>
+                    <t>- LI: Line Index for rect</t>
+                    <t>- AI: Anim Index for rect</t>
+                    <t>- LIFE: the life of the entity</t>
+                    <t>- DIRECT: is the direction </t>
+                    <t>- SPEED: set speed of entity</t>
+                    <t>- TEXT: the text to print</t>
+                    <t>- SIZE: the size of the entity</t>
+                    <t>- COLOR: set the color</t>
+                    <t>- MOVE_TYPE: Describe a movement, it can be "Left", "Red", "Sin" or "Tan"</t>
+                    <texttable title="MAP Data transfert">
+                        <ttcol align='center'>Name</ttcol>
+                        <ttcol align='center'>Byte Size</ttcol>
+                        <ttcol align='center'>exemple</ttcol>
+                        <c>ID</c>
+                        <c>4-10</c>
+                        <c>"id:Z"</c>
+                        <c>PATH</c>
+                        <c>---</c>
+                        <c>"dir/file.png"</c>
+                        <c>POS</c>
+                        <c>7-13</c>
+                        <c>"pos:X:Y"</c>
+                        <c>SIZE</c>
+                        <c>7-13</c>
+                        <c>"size:X:Y"</c>
+                        <c>RECT</c>
+                        <c>---</c>
+                        <c>"rect:[X:Y:X:Y]"</c>
+                        <c>LIFE</c>
+                        <c>6</c>
+                        <c>"life:Z"</c>
+                        <c>SCALE</c>
+                        <c>9-15</c>
+                        <c>"scale:X:Y"</c>
+                        <c>TBA</c>
+                        <c>5-14</c>
+                        <c>"TBA:K"</c>
+                        <c>LI</c>
+                        <c>4-13</c>
+                        <c>"LI:Z"</c>
+                        <c>AI</c>
+                        <c>4-13</c>
+                        <c>"AI:Z"</c>
+                        <c>DIRECT</c>
+                        <c>---</c>
+                        <c>"direct:I:J"</c>
+                        <c>COLOR</c>
+                        <c>21</c>
+                        <c>"color:R:G:B:A"</c>
+                        <c>SPEED</c>
+                        <c>---</c>
+                        <c>"speed:K"</c>
+                    </texttable>
+                </section>
+                <section title="Variable Information">
+                    <texttable title="Lettre code">
+                        <ttcol align='center'>Name</ttcol>
+                        <ttcol align='center'>Type</ttcol>
+                        <c>X : Y</c>
+                        <c>int</c>
+                        <c>Z</c>
+                        <c>size_t</c>
+                        <c>I : J</c>
+                        <c>double (between -1 ans 1)</c>
+                        <c>K</c>
+                        <c>double</c>
+                        <c>R : G : B : A</c>
+                        <c>int (between 0 ans 255)</c>
+                    </texttable>
+                </section>
+            </section>
+        </section>
+        <section title="REPLY TO CLIENT">
+            <t>This is all reply codes that can be sent to clients in response to commands.</t>
+            <t>Replies can take parameters.</t>
+            <t>message starting with 1, is in TCP and with 2 in UDP</t>
+            <section title="101{&quot;GAME_NAME&quot;;}">
+                <t>login succes.</t>
+                <t>send the game list.</t>
+            </section>
+            <section title="102{&quot;ERROR&quot;;}">
+                <t>login error.</t>
+            </section>
+            <section title="121{}">
+                <t>creat game succes.</t>
+            </section>
+            <section title="122{&quot;ERROR&quot;;}">
+                <t>creat game error.</t>
+            </section>
+            <section title="130{&quot;GAME_NAME&quot;;}">
+                <t>send the game list.</t>
+            </section>
+            <section title="141{}">
+                <t>join game succes.</t>
+            </section>
+            <section title="142{&quot;ERROR&quot;;}">
+                <t>join game error.</t>
+            </section>
+            <section title="151{}">
+                <t>leave game succes.</t>
+            </section>
+            <section title="152{&quot;ERROR&quot;;}">
+                <t>leave game error.</t>
+            </section>
+            <section title="160{&quot;GAME_NAME&quot;;&quot;CLIENT_NAME&quot;;}">
+                <t>send list of all player in a game.</t>
+            </section>
+            <section title="171{}">
+                <t>client is ready.</t>
+            </section>
+            <section title="172{&quot;ERROR&quot;;}">
+                <t>client couldn't be set as ready.</t>
+            </section>
+            <section title="181{}">
+                <t>client isn't ready.</t>
+            </section>
+            <section title="182{&quot;ERROR&quot;;}">
+                <t>client couldn't be set as not ready.</t>
+            </section>
+            <section title="190{&quot;MAP&quot;;}">
+                <t>game start.</t>
+                <t>send MAP.</t>
+            </section>
+            <section title="211{&quot;MAP&quot;;}">
+                <t>send ID of player beam loading.</t>
+            </section>
+            <section title="221{&quot;ID&quot;;}">
+                <t>send ID of player beam shooted.</t>
+            </section>
+            <section title="231{&quot;ID&quot;;&quot;DIRECT&quot;;}">
+                <t>send ID of player direction.</t>
+            </section>
+            <section title="240{&quot;PROJECTILE&quot;;}">
+                <t>send enemy shoot.</t>
+            </section>
+            <section title="250{&quot;MAP&quot;;}">
+                <t>update entities position.</t>
+            </section>
+        </section>
+        <section title="CLIENT TO SERVER">
+            <t>This is all commands between a client and the server. All of this need to be write on the client socket by the client.</t>
+            <t>message starting with 1, is in TCP and with 2 in UDP</t>
+            <section title="002{}">
+                <t>unknow request.</t>
+            </section>
+            <section title="100{&quot;CLIENT_NAME&quot;;}">
+                <t>client connexion.</t>
+            </section>
+            <section title="110{&quot;CLIENT_NAME&quot;;}">
+                <t>client disconnexion from server.</t>
+            </section>
+            <section title="120{&quot;GAME_NAME&quot;;}">
+                <t>game creat.</t>
+            </section>
+            <section title="140{&quot;GAME_NAME&quot;;}">
+                <t>join game.</t>
+            </section>
+            <section title="150{}">
+                <t>leave game.</t>
+            </section>
+            <section title="170{&quot;CLIENT_NAME&quot;;}">
+                <t>client ready.</t>
+            </section>
+            <section title="180{&quot;CLIENT_NAME&quot;;}">
+                <t>client not ready.</t>
+            </section>
+            <section title="211{}">
+                <t>player beam loading.</t>
+            </section>
+            <section title="221{}">
+                <t>player beam shooted.</t>
+            </section>
+            <section title="231{}">
+                <t>player direction.</t>
+            </section>
+        </section>
+    </middle>
+</rfc>

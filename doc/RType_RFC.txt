@@ -1,0 +1,448 @@
+
+
+
+
+EPITECH                                                    K. HERBRETEAU
+Internet-Draft                                              S. RAUTUREAU
+Intended status: Informational                                N. FROMAGE
+Expires: May 19, 2021                                      S. MISSONNIER
+                                                                 EPITECH
+                                                       november 15, 2020
+
+
+                                 TITRE
+                       R-Type - server to client
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on May 19, 2021.
+
+Copyright Notice
+
+   Copyright (c) 2020 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+1.  INTRODUCTION
+
+   The different objectives of the R-Type project are:
+
+   1) to communicate between a server and all clients.
+
+
+
+HERBRETEAU, et al.        Expires May 19, 2021                  [Page 1]
+
+Internet-Draft                    TITRE                    november 2020
+
+
+   2) to create a multi-player game.
+
+   3) to make a game graphical interface for users.
+
+   In this section, we are going to explain how to use the protocol, the
+   differents commands avaible and how to create your own server and
+   client R-Type.
+
+2.  INFORMATION
+
+   The server will send informations of users on the client socket.
+
+   Client socket is handle by the server.
+
+   Every clients will write on his socket.
+
+   Commands and replies can take parameters.
+
+2.1.  Parameter Information
+
+   - CLIENT_NAME : this is the name of a client, every client need to
+   have an unique name.
+
+   - GAME_NAME : this is the name of a game, every game need to have an
+   unique name.
+
+   - ERROR : this is an error description. (exemple: "login already
+   used")
+
+   - MAP : this is a map of all entity, every entity will be send like
+   that {entityType, other information}
+
+   entityType : they are 4 entityType: "Player", "Text", "Projectile",
+   "Enemy"
+
+                        +-------------+-----------+
+                        |     Name    | Byte Size |
+                        +-------------+-----------+
+                        | CLIENT_NAME |  16 bytes |
+                        |             |           |
+                        |  GAME_NAME  |  16 bytes |
+                        |             |           |
+                        |    ERROR    | 128 bytes |
+                        |             |           |
+                        |     MAP     |    ---    |
+                        +-------------+-----------+
+
+                              Data transfert
+
+
+
+HERBRETEAU, et al.        Expires May 19, 2021                  [Page 2]
+
+Internet-Draft                    TITRE                    november 2020
+
+
+   Inside the MAP we can have 4 entities type (Text, Player, Enemy,
+   Projectile).
+
+   All of then need to send some arguments
+
+2.1.1.  Entity Type
+
+2.1.1.1.  Text
+
+   {"Test";"ID";"PATH";"TEXT";"POS";"SIZE";"COLOR";}
+
+2.1.1.2.  Player
+
+   {"Player";"ID";"POS";"LI";}
+
+2.1.1.3.  Enemy
+
+   {"Enemy";"ID";"PATH";"RECT";"POS";"SCALE";"TBA";"LI";"AI";"LIFE";"NBA
+   ";"MOVE_TYPE"}
+
+2.1.1.4.  Projectile
+
+   {"Projectile";"ID";"PATH";"RECT";"POS";"SCALE";"TBA";"LI";"AI";"DIREC
+   T";"SPEED";}
+
+2.1.2.  Data information
+
+   - ID: this is the id of the entity
+
+   - PATH: the path to the image
+
+   - RECT: a rect of image
+
+   - POS: the position in the map
+
+   - SCALE: the of image
+
+   - TBA: Time Between Anim in sec
+
+   - LI: Line Index for rect
+
+   - AI: Anim Index for rect
+
+   - LIFE: the life of the entity
+
+   - DIRECT: is the direction
+
+   - SPEED: set speed of entity
+
+
+
+HERBRETEAU, et al.        Expires May 19, 2021                  [Page 3]
+
+Internet-Draft                    TITRE                    november 2020
+
+
+   - TEXT: the text to print
+
+   - SIZE: the size of the entity
+
+   - COLOR: set the color
+
+   - MOVE_TYPE: Describe a movement, it can be "Left", "Red", "Sin" or
+   "Tan"
+
+                 +--------+-----------+------------------+
+                 |  Name  | Byte Size |     exemple      |
+                 +--------+-----------+------------------+
+                 |   ID   |    4-10   |      "id:Z"      |
+                 |        |           |                  |
+                 |  PATH  |    ---    |  "dir/file.png"  |
+                 |        |           |                  |
+                 |  POS   |    7-13   |    "pos:X:Y"     |
+                 |        |           |                  |
+                 |  SIZE  |    7-13   |    "size:X:Y"    |
+                 |        |           |                  |
+                 |  RECT  |    ---    | "rect:[X:Y:X:Y]" |
+                 |        |           |                  |
+                 |  LIFE  |     6     |     "life:Z"     |
+                 |        |           |                  |
+                 | SCALE  |    9-15   |   "scale:X:Y"    |
+                 |        |           |                  |
+                 |  TBA   |    5-14   |     "TBA:K"      |
+                 |        |           |                  |
+                 |   LI   |    4-13   |      "LI:Z"      |
+                 |        |           |                  |
+                 |   AI   |    4-13   |      "AI:Z"      |
+                 |        |           |                  |
+                 | DIRECT |    ---    |   "direct:I:J"   |
+                 |        |           |                  |
+                 | COLOR  |     21    | "color:R:G:B:A"  |
+                 |        |           |                  |
+                 | SPEED  |    ---    |    "speed:K"     |
+                 +--------+-----------+------------------+
+
+                            MAP Data transfert
+
+2.1.3.  Variable Information
+
+
+
+
+
+
+
+
+
+HERBRETEAU, et al.        Expires May 19, 2021                  [Page 4]
+
+Internet-Draft                    TITRE                    november 2020
+
+
+               +---------------+---------------------------+
+               |      Name     |            Type           |
+               +---------------+---------------------------+
+               |     X : Y     |            int            |
+               |               |                           |
+               |       Z       |           size_t          |
+               |               |                           |
+               |     I : J     | double (between -1 ans 1) |
+               |               |                           |
+               |       K       |           double          |
+               |               |                           |
+               | R : G : B : A |  int (between 0 ans 255)  |
+               +---------------+---------------------------+
+
+                                Lettre code
+
+3.  REPLY TO CLIENT
+
+   This is all reply codes that can be sent to clients in response to
+   commands.
+
+   Replies can take parameters.
+
+   message starting with 1, is in TCP and with 2 in UDP
+
+3.1.  101{"GAME_NAME";}
+
+   login succes.
+
+   send the game list.
+
+3.2.  102{"ERROR";}
+
+   login error.
+
+3.3.  121{}
+
+   creat game succes.
+
+3.4.  122{"ERROR";}
+
+   creat game error.
+
+3.5.  130{"GAME_NAME";}
+
+   send the game list.
+
+
+
+
+
+HERBRETEAU, et al.        Expires May 19, 2021                  [Page 5]
+
+Internet-Draft                    TITRE                    november 2020
+
+
+3.6.  141{}
+
+   join game succes.
+
+3.7.  142{"ERROR";}
+
+   join game error.
+
+3.8.  151{}
+
+   leave game succes.
+
+3.9.  152{"ERROR";}
+
+   leave game error.
+
+3.10.  160{"GAME_NAME";"CLIENT_NAME";}
+
+   send list of all player in a game.
+
+3.11.  171{}
+
+   client is ready.
+
+3.12.  172{"ERROR";}
+
+   client couldn't be set as ready.
+
+3.13.  181{}
+
+   client isn't ready.
+
+3.14.  182{"ERROR";}
+
+   client couldn't be set as not ready.
+
+3.15.  190{"MAP";}
+
+   game start.
+
+   send MAP.
+
+3.16.  211{"MAP";}
+
+   send ID of player beam loading.
+
+
+
+
+
+
+HERBRETEAU, et al.        Expires May 19, 2021                  [Page 6]
+
+Internet-Draft                    TITRE                    november 2020
+
+
+3.17.  221{"ID";}
+
+   send ID of player beam shooted.
+
+3.18.  231{"ID";"DIRECT";}
+
+   send ID of player direction.
+
+3.19.  240{"PROJECTILE";}
+
+   send enemy shoot.
+
+3.20.  250{"MAP";}
+
+   update entities position.
+
+4.  CLIENT TO SERVER
+
+   This is all commands between a client and the server.  All of this
+   need to be write on the client socket by the client.
+
+   message starting with 1, is in TCP and with 2 in UDP
+
+4.1.  002{}
+
+   unknow request.
+
+4.2.  100{"CLIENT_NAME";}
+
+   client connexion.
+
+4.3.  110{"CLIENT_NAME";}
+
+   client disconnexion from server.
+
+4.4.  120{"GAME_NAME";}
+
+   game creat.
+
+4.5.  140{"GAME_NAME";}
+
+   join game.
+
+4.6.  150{}
+
+   leave game.
+
+
+
+
+
+HERBRETEAU, et al.        Expires May 19, 2021                  [Page 7]
+
+Internet-Draft                    TITRE                    november 2020
+
+
+4.7.  170{"CLIENT_NAME";}
+
+   client ready.
+
+4.8.  180{"CLIENT_NAME";}
+
+   client not ready.
+
+4.9.  211{}
+
+   player beam loading.
+
+4.10.  221{}
+
+   player beam shooted.
+
+4.11.  231{}
+
+   player direction.
+
+Authors' Addresses
+
+   Kilian HERBRETEAU
+   EPITECH
+
+   Email: kilian.herbreteau@epitech.eu
+
+
+   Samuel RAUTUREAU
+   EPITECH
+
+   Email: samuel.rautureau@epitech.eu
+
+
+   Nathan FROMAGE
+   EPITECH
+
+   Email: nathan.fromage@epitech.eu
+
+
+   Samuel MISSONNIER
+   EPITECH
+
+   Email: samuel.missonnier@epitech.eu
+
+
+
+
+
+
+
+HERBRETEAU, et al.        Expires May 19, 2021                  [Page 8]

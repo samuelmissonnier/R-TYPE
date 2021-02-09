@@ -1,0 +1,76 @@
+Client Utils
+
+.cpp
+
+std::wstring ClientUtils::convertStringInToWtring(const std::string &str) noexcept
+{
+    return (std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(str));
+}
+
+std::pair<std::pair<double, double>, std::vector<int>> ClientUtils::convertStringInToPos(std::string toParse, size_t len, bool state)
+{
+    std::string getlol;
+    std::string stock;
+    std::pair<std::pair<double, double>, std::vector<int>> final;
+
+    for (size_t i = 0; i != len; i++) {
+        size_t found = toParse.find(':');
+        if (found != std::string::npos) {
+            getlol = toParse.substr(found + 1);
+            size_t found2 = getlol.find(':');
+            if (found2 != std::string::npos) { 
+                stock = toParse.substr(found + 1, found2);
+                state == true ? final.first.first = std::atof(stock.c_str()) : final.first.first = 0;
+                state == false ? final.second.push_back(std::atoi(stock.c_str())) : final.second.push_back(0);
+                toParse = getlol;
+            }
+        }
+    }
+    state == true ? final.first.second = std::atof(getlol.c_str()) : final.first.second = 0;
+    state == false ? final.second.push_back(std::atoi(getlol.c_str())) : final.second.push_back(0);
+    return final;
+}
+
+.hpp
+
+static std::wstring convertStringInToWtring(const std::string &str) noexcept;
+
+static std::pair<std::pair<double, double>, std::vector<int>> convertStringInToPos(std::string toParse, size_t len, bool state);
+
+Text.cpp
+
+TEXT : "filepath" "text" "pos:X:Y" "size:X:Y" "color:R:G:B:T"
+
+Text::Text(const std::string &filepath, const std::string &text,
+           const std::string &pos, const std::string &size, const std::string &color) :
+    AEntity(IEntity::EntityType::Text, pos), Color(color), _filepath(filepath)
+{
+    _text = ClientUtils::convertStringInToWtring(text);
+    _pos = ClientUtils::convertStringInToPos(pos, std::count(pos.begin(), pos.end(), ':'), true).first;
+}
+
+Text.hpp
+
+#include "../../Utils/ClientUtils.hpp"
+
+Text(const std::string &filepath, const std::string &text,
+           const std::string &pos, const std::string &size, const std::string &color);
+
+//Position _pos;
+//RGBAColor _color;
+
+Entity.cpp
+
+AEntity::AEntity(IEntity::EntityType entityType, const std::string &pos, const std::string &scale) :
+    _type(entityType)
+{}
+
+Color::Color(const std::string &color) : 
+    _colors(color)
+{}
+
+Entity.hpp
+
+AEntity(EntityType entityType, const std::string &pos = nullptr, const std::string &scale = nullptr);
+
+Color(const std::string &color);
